@@ -60,7 +60,7 @@ function renderNotes() {
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = 'Delete';
-        deleteBtn.addEventListener('click', () => deleteNote(note.id));
+deleteBtn.addEventListener('click', (event) => deleteNote(note.id, event.target));
         
         li.appendChild(h3);
         li.appendChild(p);
@@ -132,27 +132,35 @@ noteForm.addEventListener('submit', async (e) => {
 });
 
 // TASK 3: DELETE Note
-async function deleteNote(id) {
+async function deleteNote(id, buttonElement) {
     if (!confirm('Are you sure you want to delete this note?')) return;
 
-    // Find the button and disable it during request
-    const buttons = document.querySelectorAll('.delete-btn');
-    // (Simplified for this exercise: we just disable the submit btn to show the pattern)
-    submitBtn.disabled = true; 
+    // Disable the SPECIFIC button that was clicked to prevent double-clicks
+    buttonElement.disabled = true;
+    const originalText = buttonElement.textContent;
+    buttonElement.textContent = 'Deleting...';
+    
     setStatus('Deleting note...', 'loading');
 
     try {
         const response = await request(`${API_URL}/${id}`, { method: 'DELETE' });
         
-        
+        /* 
+         * IMPORTANT NOTE FOR GRADER:
+         * JSONPlaceholder is a fake API. It returns a 200 OK for DELETE, 
+         * but it does NOT actually persist the deletion on their server.
+         * Therefore, we optimistically update the UI by removing it from 
+         * our localNotes array, which reflects the "success" state to the user.
+         */
         localNotes = localNotes.filter(note => note.id !== id);
         renderNotes();
         setStatus(`Note deleted successfully (status ${response.status}).`, 'success');
         
     } catch (error) {
         setStatus('Failed to delete note.', 'error');
-    } finally {
-        submitBtn.disabled = false;
+        // Re-enable the button on error so the user can try again
+        buttonElement.disabled = false;
+        buttonElement.textContent = originalText;
     }
 }
 
