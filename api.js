@@ -79,6 +79,7 @@ loadBtn.addEventListener('click', async () => {
         const response = await request(`${API_URL}?_limit=10`);
         const data = await response.json();
         localNotes = data;
+        
         renderNotes();
         setStatus(`Loaded ${localNotes.length} notes from the server.`, 'success');
     } catch (error) {
