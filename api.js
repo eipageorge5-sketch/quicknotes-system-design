@@ -143,11 +143,7 @@ async function deleteNote(id) {
     try {
         const response = await request(`${API_URL}/${id}`, { method: 'DELETE' });
         
-        /* 
-         * but it does NOT actually persist the deletion on their server.
-         * Therefore, I optimistically update the UI by removing it from 
-         * our localNotes array, which reflects the "success" state to the user.
-         */
+        
         localNotes = localNotes.filter(note => note.id !== id);
         renderNotes();
         setStatus(`Note deleted successfully (status ${response.status}).`, 'success');
