@@ -51,4 +51,24 @@ The QuickNotes API will expose the following RESTful endpoints for managing note
   }
 }
 
+## 4. Error Handling and Status Codes
+The API will return consistent JSON error objects for all failures to help the frontend client handle them gracefully.
 
+| Status Code | Name | Example Scenario |
+| :--- | :--- | :--- |
+| `400` | Bad Request | The client sent a POST request with a missing `title` field or a title exceeding 100 characters. |
+| `401` | Unauthorized | The request is missing a valid JWT authentication token, or the token has expired. |
+| `403` | Forbidden | An authenticated user attempts to DELETE or UPDATE a note that belongs to a different user. |
+| `404` | Not Found | A GET request is made for `/api/notes/999` but no note with that ID exists in the database. |
+| `500` | Internal Server Error | An unexpected failure occurs on the server, such as the database connection dropping during a write operation. |
+
+**Example Error Response Body:**
+Whenever an error occurs, the API will return a JSON object in this format:
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "The 'title' field is required and cannot be empty.",
+    "status": 400
+  }
+}
