@@ -55,3 +55,8 @@ FROM users u
 LEFT JOIN notes n ON u.id = n.user_id
 GROUP BY u.id, u.username;
 
+## 4. Indexing Strategy
+I would add an index on the `user_id` column in the `notes` table, and potentially on the `name` column in the `tags` table:
+```sql
+CREATE INDEX idx_notes_user_id ON notes(user_id);
+CREATE INDEX idx_tags_name ON tags(name);
